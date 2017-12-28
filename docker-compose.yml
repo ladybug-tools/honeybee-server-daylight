@@ -1,0 +1,25 @@
+version: '2.2'
+services:
+
+    hbflask:
+        build: .
+        command: "python app.py"
+        ports:
+            - '5000:5000'
+        links:
+            - redis
+            - celery
+        volumes:
+            - ./jobs:/usr/local/hb_docker/jobs
+
+    celery:
+        build: .
+        # user: nobody - There are permission issues that I couldn't solve.
+        command: "celery -A app.celery worker --loglevel=info"
+        links:
+            - redis
+        volumes:
+            - ./jobs:/usr/local/hb_docker/jobs
+
+    redis:
+        image: redis

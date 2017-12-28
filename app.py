@@ -13,13 +13,13 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'top-secret!'
 app.config['HISTORY'] = []
 # Celery configuration
-app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
-app.config['CELERY_BACKEND'] = 'redis://localhost:6379/0'
+app.config['CELERY_BROKER_URL'] = 'redis://redis:6379/0'
+app.config['CELERY_BACKEND'] = 'redis://redis:6379/0'
 # Initialize Celery
 celery = make_celery(app)
 
 # create the folder in doesn't exist
-app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(BASEDIR), 'jobs')
+app.config['UPLOAD_FOLDER'] = os.path.join(BASEDIR, 'jobs')
 if not os.path.isdir(app.config['UPLOAD_FOLDER']):
     os.mkdir(app.config['UPLOAD_FOLDER'])
 
@@ -96,7 +96,12 @@ def upload_file():
             app.config['HISTORY'].append(task.id)
             return jsonify(
                 {'success': True,
-                 'message': 'Uploaded {}'. format(input_file.filename)}), 202, \
+                 'message': 'Uploaded {}. Check status_url for progress and results'
+                    .format(input_file.filename),
+                 'task_id': task.id,
+                 'status_url': url_for('status', task_id=task.id),
+                 'download_url': url_for('download', task_id=task.id),
+                 }), 202, \
                 {'status': url_for('status', task_id=task.id), 'task_id': task.id}
         else:
             response = jsonify({'success': False,
@@ -107,7 +112,7 @@ def upload_file():
         # GET requests
         return '''
         <!doctype html>
-        <title>Upload new File</title>
+        <title>Upload Recipe JSON</title>
         <h1>Upload new File</h1>
         <form method=post enctype=multipart/form-data>
           <p><input type=file name=file>
@@ -181,4 +186,4 @@ def status(task_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host='0.0.0.0')
