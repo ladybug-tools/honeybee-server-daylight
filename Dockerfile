@@ -7,16 +7,16 @@ WORKDIR /usr/local/hb_docker
 COPY requirements.txt requirements.txt
 RUN pip install -r requirements.txt
 
+# copy radiance libraries
+COPY ./radiance/bin /usr/local/bin
+COPY ./radiance/lib /usr/local/lib/ray
+
 # create jobs folder as place holder
 COPY ./jobs /jobs
 
 # this didn't solve the permission issues for celery.
-# for now running everything as root. 
+# for now running everything as root.
 # RUN chown nobody: /jobs && chmod u+rwX /jobs
-
-# copy radiance libraries
-COPY ./radiance/bin /usr/local/bin
-COPY ./radiance/lib /usr/local/lib/ray
 
 # copy ladybug and honeybee libraries.
 COPY ./ladybug ./ladybug

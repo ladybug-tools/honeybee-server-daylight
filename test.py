@@ -4,7 +4,7 @@ import json
 
 status_url = {}
 for i in range(25):
-    data = {'file': open('./tests/recipe.json', 'rb')}
+    data = {'file': open('./tests/test_recipe.json', 'rb')}
     response = requests.post(url='http://127.0.0.1:5000/', files=data)
     print(response.content)
     status_url[response.headers['status']] = False  # is done is false
