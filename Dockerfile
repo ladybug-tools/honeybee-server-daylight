@@ -14,10 +14,6 @@ COPY ./radiance/lib /usr/local/lib/ray
 # create jobs folder as place holder
 COPY ./jobs /jobs
 
-# this didn't solve the permission issues for celery.
-# for now running everything as root.
-# RUN chown nobody: /jobs && chmod u+rwX /jobs
-
 # copy ladybug and honeybee libraries.
 COPY ./ladybug ./ladybug
 COPY ./honeybee ./honeybee

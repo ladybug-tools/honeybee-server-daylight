@@ -4,7 +4,7 @@ from celery import Celery
 def make_celery(app):
     """Make celery class for flask app.
 
-    from: http://flask.pocoo.org/docs/0.11/patterns/celery/#configuring-celery
+    Modified from: http://flask.pocoo.org/docs/0.11/patterns/celery/#configuring-celery
     """
     celery = Celery(app.import_name, backend=app.config['CELERY_BACKEND'],
                     broker=app.config['CELERY_BROKER_URL'])
