@@ -1,26 +1,38 @@
-version: '2.2'
+version: '2'
 services:
+  api:
+    build:
+        context: ./honeybee-server
+        dockerfile: Dockerfile
+    image: ladybugtools/hbserver
+    command: "python app.py"    
+    # restart: always
+    ports:
+        - "5000:5000"
+    links:
+        - redis
+        - worker
+    volumes:
+        - ./jobs:/usr/local/hb_jobs
 
-    hbflask:
-        image: ladybugtools/hbserver
-        command: "python app.py"
-        ports:
-            - '5000:5000'
-        links:
-            - redis
-            - celery
-        volumes:
-            - ./jobs:/usr/local/hb_docker/jobs
-
-    celery:
-        build: .
-        image: ladybugtools/hbserver
-        # user: nobody - There are permission issues that I couldn't solve.
-        command: "celery -A app.celery worker --loglevel=info"
-        links:
-            - redis
-        volumes:
-            - ./jobs:/usr/local/hb_docker/jobs
-
-    redis:
-        image: redis
+  worker:
+    build:
+        context: ./honeybee-worker
+        dockerfile: Dockerfile
+    image: ladybugtools/hbworker
+    links:
+        - redis
+    volumes:
+        - ./jobs:/usr/local/hb_jobs 
+  
+  monitor:
+    image: ladybugtools/hbworker
+    ports:
+        - "5555:5555"
+    entrypoint: flower
+    command: -A tasks --port=5555 --broker=redis://redis:6379
+    links:
+        - redis
+  
+  redis:
+    image: redis
