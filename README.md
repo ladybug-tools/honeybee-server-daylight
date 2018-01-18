@@ -1,11 +1,17 @@
-# honeybee server docker image
+# honeybee server docker image for daylight analysis
 Honeybee docker for daylight studies. This project is built based on the learnings from the [honeybee-server](https://github.com/ladybug-tools/honeybee-server) during the hackathon.
 It uses Flask, Redis and Celery libraries to provide a non-blocking web server for [honeybee](https://github.com/ladybug-tools/honeybee).
 
 ## Getting started
-- Install [docker](https://docs.docker.com/engine/installation/).
-- Install [docker-compose](https://docs.docker.com/compose/install/). For Windows it is bundled with the installation.
+- Install [docker](https://docs.docker.com/engine/installation/) 17.12.0-ce or higher.
+- Install [docker-compose](https://docs.docker.com/compose/install/) 1.18.0 or higher. For Windows it is bundled with the installation.
 - Clone this repository.
+
+**NOTE**: If you have docker and docker-compose already installed you can check the version by using commands below:
+```shell
+>> docker version
+>> docker-compose version
+```
 
 Now go to the directory and use `docker-compose build` to build the bundle. In Windows run cmd as an administrator. For impatient users try `docker-compose up --build -d` and go to **Run Simulations** section.
 
