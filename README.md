@@ -148,7 +148,6 @@ for grid in content['result']:
 ## Remove containers
 ```shell
 >> docker-compose down
->> docker rm $(docker ps -a -q)
 ```
 
 ## Dependencies

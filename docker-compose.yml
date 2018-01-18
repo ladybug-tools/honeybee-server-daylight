@@ -5,15 +5,22 @@ services:
         context: ./honeybee-server
         dockerfile: Dockerfile
     image: ladybugtools/hbserver
-    command: "python app.py"    
+    command: "python app.py"
     # restart: always
     ports:
-        - "5000:5000"
+        - "${PORT}:${PORT}"
     links:
         - redis
         - worker
     volumes:
         - ./jobs:/usr/local/hb_jobs
+    environment:
+        - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+        - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+        - C_FORCE_ROOT=${C_FORCE_ROOT}
+        - HOST=${HOST}
+        - PORT=${PORT}
+        - DEBUG=${DEBUG}
 
   worker:
     build:
@@ -23,16 +30,20 @@ services:
     links:
         - redis
     volumes:
-        - ./jobs:/usr/local/hb_jobs 
-  
+        - ./jobs:/usr/local/hb_jobs
+    environment:
+        - CELERY_BROKER_URL=${CELERY_BROKER_URL}
+        - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
+        - C_FORCE_ROOT=${C_FORCE_ROOT}
+
   monitor:
     image: ladybugtools/hbworker
     ports:
-        - "5555:5555"
+        - "${MONITOR_PORT}:${MONITOR_PORT}"
     entrypoint: flower
-    command: -A tasks --port=5555 --broker=redis://redis:6379
+    command: -A tasks --port=${MONITOR_PORT} --broker=${CELERY_BROKER_URL}
     links:
         - redis
-  
+
   redis:
     image: redis

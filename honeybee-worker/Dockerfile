@@ -1,8 +1,8 @@
 FROM ladybugtools/honeybee
 
-ENV CELERY_BROKER_URL redis://redis:6379
-ENV CELERY_RESULT_BACKEND redis://redis:6379
-ENV C_FORCE_ROOT true
+ENV CELERY_BROKER_URL=redis://redis:6379 \
+  CELERY_RESULT_BACKEND=redis://redis:6379 \
+  C_FORCE_ROOT=true
 
 # install requirements
 COPY requirements.txt requirements.txt
@@ -16,4 +16,4 @@ WORKDIR /usr/local/hb_worker
 COPY ./*.py ./
 
 # run the worker
-ENTRYPOINT celery -A tasks worker --loglevel=info
+ENTRYPOINT ["celery", "-A", "tasks", "worker", "--loglevel=info"]
