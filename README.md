@@ -40,7 +40,7 @@ Now let's run it for the first time! I will use `-d` run the create the containe
 ```
 
 ## Add more workers
-If you go to http://localhost:5555 you will see that by default one worker is created and waiting for jobs but we can scale the workers by using `docker-compose up --scale` command. Try the command below to create 5 containers each running a worker.
+If you go to http://192.168.99.100:5555 you will see that by default one worker is created and waiting for jobs but we can scale the workers by using `docker-compose up --scale` command. Try the command below to create 5 containers each running a worker.
 
 ```shell
 >> docker-compose up -d --scale worker=5
@@ -71,85 +71,9 @@ ee06f7d06b44        redis                   "docker-entrypoint.s…"   37 second
 ```
 
 ## Run simulations
-This image works with honeybee recipes in JSON format. If you don't have any check the `tests` folder for a number of sample files.
+This image works with honeybee recipes in JSON format. Check the dev/run folder for example JSON payloads to be sent to the server. 
 
-Open a browser of your choice and go to `localhost:5000`. Select the file and press upload.
-
-![image](https://user-images.githubusercontent.com/2915573/34425465-302cf38a-ebfa-11e7-9055-27e0c6e8e594.png)
-
-The server should return a JSON object similar to this:
-```js
-{
-  "download_url": "/download/7b9fe04c-53ac-4aaa-b6e6-0412ba24e602",
-  "message": "Uploaded test_recipe.json. Check status_url for progress and results",
-  "status_url": "/status/7b9fe04c-53ac-4aaa-b6e6-0412ba24e602",
-  "success": true,
-  "task_id": "7b9fe04c-53ac-4aaa-b6e6-0412ba24e602"
-}
-```
-Now you can use the `status_url` to see the progress and results or use or `download_url` to download the simulation folder.
-
-This is the first lines for http://localhost:5000/status/7b9fe04c-53ac-4aaa-b6e6-0412ba24e602
-```js
-{
-  "current": 100,
-  "result": [
-    {
-      "analysis_points": [
-        {
-          "direction": [
-            0.0,
-            0.0,
-            1.0
-          ],
-          "location": [
-            0.5,
-            0.5,
-            0.7620000243186951
-          ],
-          "values": [
-            [
-              {
-                "1639": [
-                  1,
-                  null
-                ], ...
-}
-```
-
-Or you can send the request using python. This is also how honeybee calls this service. See `test.py` for an example with multiple jobs to see how celery handles multiple jobs without blocking the server. Here is an example for a single simulation.
-
-```python
-import requests
-import time
-import json
-
-data = {'file': open('./tests/solar_access_recipe.json', 'rb')}
-response = requests.post(url='http://127.0.0.1:5000/', files=data)
-status_url = response.headers['status']
-
-# check the status
-while True:
-    progress = requests.get('http://127.0.0.1:5000' + status_url)
-    content = json.loads(progress.content)
-    if content['state'] == 'PENDING':
-        print('task is pending!')
-    elif content['state'] == 'STARTED':
-        print('task is still running!')
-    else:
-        print('task is finished!')
-        break
-    time.sleep(1)
-
-# get results
-for grid in content['result']:
-     for count, pt in enumerate(grid['analysis_points']):
-         print('sensor #{}; location: {}'.format(count, pt['location']))
-         for values in pt['values'][0]:
-             for hour, value in values.iteritems():
-                 print('\thour: {} >> result: {}'.format(hour, value[0]))
-```
-
+* MORE DOCUMENTATION IS REQUIRED TO FACILITATE ONBOARDING PEOPLE FOR THIS PROCESS. IT'S ON IT'S WAY I PROMISE (ANTOINE)*
 
 ## Remove containers
 ```shell
