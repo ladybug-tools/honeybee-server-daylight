@@ -1,49 +1,29 @@
 version: '2'
 services:
-  api:
+  web:
     build:
-        context: ./honeybee-server
-        dockerfile: Dockerfile
-    image: ladybugtools/hbserver
-    command: "python app.py"
-    # restart: always
+      context: ./flask-app
+      dockerfile: Dockerfile
+    restart: always
     ports:
-        - "${PORT}:${PORT}"
-    links:
-        - redis
-        - worker
-    volumes:
-        - ./jobs:/usr/local/hb_jobs
-    environment:
-        - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-        - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
-        - C_FORCE_ROOT=${C_FORCE_ROOT}
-        - HOST=${HOST}
-        - PORT=${PORT}
-        - DEBUG=${DEBUG}
-
+     - "5000:5000"
+    depends_on:
+      - redis
   worker:
     build:
-        context: ./honeybee-worker
-        dockerfile: Dockerfile
-    image: ladybugtools/hbworker
-    links:
-        - redis
-    volumes:
-        - ./jobs:/usr/local/hb_jobs
-    environment:
-        - CELERY_BROKER_URL=${CELERY_BROKER_URL}
-        - CELERY_RESULT_BACKEND=${CELERY_RESULT_BACKEND}
-        - C_FORCE_ROOT=${C_FORCE_ROOT}
-
+      context: ./flask-celery
+      dockerfile: Dockerfile
+    depends_on:
+      - redis
   monitor:
-    image: ladybugtools/hbworker
+    build:
+      context: ./flask-celery
+      dockerfile: Dockerfile
     ports:
-        - "${MONITOR_PORT}:${MONITOR_PORT}"
+     - "5555:5555"
     entrypoint: flower
-    command: -A tasks --port=${MONITOR_PORT} --broker=${CELERY_BROKER_URL}
-    links:
-        - redis
-
+    command:  -A tasks --port=5555 --broker=redis://redis:6379/0 --url-prefix=flower
+    depends_on:
+      - redis
   redis:
     image: redis
