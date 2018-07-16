@@ -162,7 +162,7 @@ Dependencies is just for the purpose of giving credits. Thanks to docker you don
 1. [Python 2.7](https://www.python.org/)
 2. [Flask 0.12.2](http://flask.pocoo.org/)
 3. [Redis 2.10.6](https://redis.io/)
-4. [Celery 4.1.0](http://www.celeryproject.org/)
+4. [Celery 4.1.1](http://www.celeryproject.org/)
 5. [Flower 0.9.2](https://flower.readthedocs.io/en/latest/)
 6. [Honeybee](http://www.ladybug.tools/honeybee.html)
 7. [Radiance 5.2.0](https://github.com/NREL/Radiance/releases/tag/5.2.0)
