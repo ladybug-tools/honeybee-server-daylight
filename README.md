@@ -1,3 +1,5 @@
+# This project is retired! For the latest version of honeybee docker images see [ladybug tools repository on docker hub](https://hub.docker.com/u/ladybugtools).
+
 # honeybee server docker image for daylight analysis
 Honeybee docker for daylight studies. This project is built based on the learnings from the [honeybee-server](https://github.com/ladybug-tools/honeybee-server) during the hackathon.
 It uses Flask, Redis and Celery libraries to provide a non-blocking web server for [honeybee](https://github.com/ladybug-tools/honeybee).
